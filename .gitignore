@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+
+# Django / DB
+db.sqlite3
+
+# Env
+asset_mgn/.env
+
+# Venv
+venv/
