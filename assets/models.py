@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
 import qrcode
@@ -70,8 +71,20 @@ class Asset(models.Model):
     purchase_date = models.DateField()
     warranty_expiry = models.DateField(null=True, blank=True)
 
+    # Tối ưu hóa truy vấn tìm kiếm theo asset_code, category và current_department
+    class Meta:
+        indexes = [
+            models.Index(fields=['asset_code']),
+            models.Index(fields=['category']),
+            models.Index(fields=['current_department']),
+        ]
+
+    def clean(self):
+        # Ngăn asset tham chiếu chính nó
+        if self.parent_asset and self.parent_asset == self:
+            raise ValidationError("Tài sản không thể thuộc về chính nó.")
+
     def save(self, *args, **kwargs):
-        # 1. Sửa lỗi logic: Dùng self.asset_code thay vì self.barcode/self.code
         if not self.qr_code and self.asset_code:
             qr = qrcode.QRCode(version=1, box_size=10, border=5)
             qr.add_data(self.asset_code) # Đã sửa
@@ -83,6 +96,7 @@ class Asset(models.Model):
 
             self.qr_code.save(f'qr_{self.asset_code}.png', # Đã sửa
                               File(buffer), save=False)
+        self.clean()  # đảm bảo kiểm tra trước khi lưu
         super().save(*args, **kwargs)
 
     def __str__(self):
