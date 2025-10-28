@@ -68,7 +68,7 @@ class Asset(models.Model):
     )
     asset_code = models.CharField(max_length=100, unique=True)
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True)
-    status = models.CharField(max_length=20, choices=AssetStatus.choices, default=AssetStatus.IN_USE)
+    status = models.CharField(max_length=20, choices=AssetStatus.choices, default=AssetStatus.IN_STORAGE)
     current_department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
     current_person = models.ForeignKey(Person, on_delete=models.SET_NULL, null=True, blank=True)
     note = models.TextField(blank=True)
