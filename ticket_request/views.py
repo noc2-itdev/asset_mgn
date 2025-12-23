@@ -10,4 +10,4 @@ def ticket_request_success_view(request):
     return render(request, "ticket_request/ticket_request_successed.html")
 
 def  ticket_request_detail_view(request):
-    return render(request, "ticket_request/ticket_request_detail.html")
+    return render(request, "ticket_request/ticket_request_detail222222.html")
