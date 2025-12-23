@@ -3,7 +3,7 @@
 This project sets up a full-stack Django Rest Framework application, powered by:
 
 - DRF 3.16.1
-- PostgreSQL 15 (docker container)
+- PostgreSQL 15 (docker container or standalone)
 
 ---
 
@@ -32,10 +32,9 @@ source venv/bin/activate  (Os Linux)
 python -m pip install -r requirements.txt
 ```
 
-### 3. Create and run project Django
+### 3. Run project Django
 
 ```bash
-python manage.py startproject asset_mgn .
 python manage.py runserver 0.0.0.0:8000
 ```
 

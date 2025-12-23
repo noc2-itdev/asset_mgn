@@ -44,10 +44,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'assets',
+    'corsheaders',
+    'main',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -138,3 +140,20 @@ REST_FRAMEWORK = {
            'rest_framework.authentication.TokenAuthentication',
        ],
    }
+
+# Add CORS settings here
+CORS_ALLOW_ALL_ORIGINS = False  # Don't allow all origins for security
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4201",  # Your Angular frontend URL
+]
+
+CORS_ALLOW_CREDENTIALS = True  # Allow credentials to be sent
+
+# If you need to allow specific headers
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'authorization',
+    'content-type',
+    'x-csrftoken',
+    'x-requested-with',
+]
