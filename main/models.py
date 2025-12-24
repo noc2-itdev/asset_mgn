@@ -404,3 +404,26 @@ class AssetReceiptItem(models.Model):
     category = models.ForeignKey(AssetCategory, on_delete=models.SET_NULL, null=True)
     quantity = models.PositiveIntegerField()
     unit_price = models.DecimalField(max_digits=15, decimal_places=2)
+
+
+# Phiếu phân bổ / xuất kho (FR3.1)
+class AssetAllocation(models.Model):
+    allocation_code = models.CharField(max_length=50, unique=True)
+    from_department = models.ForeignKey(
+        Department, on_delete=models.SET_NULL, null=True, related_name="alloc_out"
+    )
+    to_department = models.ForeignKey(
+        Department, on_delete=models.SET_NULL, null=True, related_name="alloc_in"
+    )
+    requester = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    approved_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class AssetAllocationItem(models.Model):
+    allocation = models.ForeignKey(
+        AssetAllocation, on_delete=models.CASCADE, related_name="items"
+    )
+    asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
