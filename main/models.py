@@ -39,10 +39,12 @@ class Location(models.Model):
 
 # AssetStatus: Trạng thái tài sản (đang sử dụng, lưu kho, thanh lý, ...).
 class AssetStatus(models.TextChoices):
-    IN_USE = "in_use", "Đang sử dụng"
-    IN_STORAGE = "in_storage", "Lưu kho"
-    LIQUIDATED = "liquidated", "Thanh lý"
-    BROKEN = "broken", "Hư hỏng"
+    IN_USE = "in_use"
+    IN_STORAGE = "in_storage"
+    BORROWED = "borrowed"
+    UNDER_MAINTENANCE = "maintenance"
+    BROKEN = "broken"
+    LIQUIDATED = "liquidated"
 
 
 # AssetCategory: phân loại linh kiện và tài sản chính. (máy tính, máy in, RAM, SSD,...).
