@@ -458,3 +458,25 @@ class AssetLiquidation(models.Model):
         max_digits=15, decimal_places=2, null=True, blank=True
     )
     note = models.TextField(blank=True)
+
+
+# Kế hoạch & Biên bản kiểm kê (FR4)
+class AuditPlan(models.Model):
+    name = models.CharField(max_length=255)
+    scope_type = models.CharField(
+        max_length=20,
+        choices=[("all", "Toàn bộ"), ("department", "Đơn vị"), ("location", "Vị trí")],
+    )
+    audit_date = models.DateField()
+
+
+class AuditRecord(models.Model):
+    plan = models.ForeignKey(
+        AuditPlan, on_delete=models.CASCADE, related_name="records"
+    )
+    asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
+    result = models.CharField(
+        max_length=20,
+        choices=[("ok", "Đúng"), ("missing", "Thiếu"), ("damaged", "Hỏng")],
+    )
+    note = models.TextField(blank=True)
