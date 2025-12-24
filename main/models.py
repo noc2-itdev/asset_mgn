@@ -427,3 +427,20 @@ class AssetAllocationItem(models.Model):
         AssetAllocation, on_delete=models.CASCADE, related_name="items"
     )
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
+
+
+# Mượn – Trả tài sản (FR3.2–3.3)
+class AssetBorrow(models.Model):
+    asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
+    borrower = models.ForeignKey(User, on_delete=models.CASCADE)
+    approved_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    borrow_date = models.DateField()
+    due_date = models.DateField()
+    return_date = models.DateField(null=True, blank=True)
+    return_status = models.CharField(
+        max_length=20,
+        choices=[("good", "Tốt"), ("damaged", "Hỏng"), ("lost", "Mất")],
+        blank=True,
+    )
