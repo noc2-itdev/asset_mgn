@@ -383,3 +383,24 @@ class AssetAttributeValue(models.Model):
     )
     attribute = models.ForeignKey(AssetAttribute, on_delete=models.CASCADE)
     value = models.TextField()
+
+
+# Phiếu nhập tài sản (FR2)
+class AssetReceipt(models.Model):
+    receipt_code = models.CharField(max_length=50, unique=True)
+    supplier = models.CharField(max_length=255)
+    receipt_date = models.DateField()
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    approved_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    note = models.TextField(blank=True)
+
+
+class AssetReceiptItem(models.Model):
+    receipt = models.ForeignKey(
+        AssetReceipt, on_delete=models.CASCADE, related_name="items"
+    )
+    category = models.ForeignKey(AssetCategory, on_delete=models.SET_NULL, null=True)
+    quantity = models.PositiveIntegerField()
+    unit_price = models.DecimalField(max_digits=15, decimal_places=2)
