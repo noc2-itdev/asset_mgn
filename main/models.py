@@ -487,3 +487,11 @@ class AuditRecord(models.Model):
         choices=[("ok", "Đúng"), ("missing", "Thiếu"), ("damaged", "Hỏng")],
     )
     note = models.TextField(blank=True)
+
+
+# Snapshot biến động tài sản (FR7.5)
+class AssetSnapshot(models.Model):
+    asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
+    snapshot_date = models.DateField()
+    department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True)
+    status = models.CharField(max_length=20)
