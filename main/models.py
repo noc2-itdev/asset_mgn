@@ -269,6 +269,7 @@ class AssetHistory(models.Model):
     related_audit = models.ForeignKey(
         "AssetAudit", on_delete=models.SET_NULL, null=True, blank=True
     )
+    performed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return f"{self.asset} - {self.action} - {self.date}"
