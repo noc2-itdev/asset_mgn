@@ -444,3 +444,17 @@ class AssetBorrow(models.Model):
         choices=[("good", "Tốt"), ("damaged", "Hỏng"), ("lost", "Mất")],
         blank=True,
     )
+
+
+# Thanh lý tài sản (FR6)
+class AssetLiquidation(models.Model):
+    asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
+    proposed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    approved_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    liquidation_date = models.DateField()
+    liquidation_value = models.DecimalField(
+        max_digits=15, decimal_places=2, null=True, blank=True
+    )
+    note = models.TextField(blank=True)
