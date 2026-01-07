@@ -1,8 +1,8 @@
 # 📋 TÀI LIỆU DỰ ÁN QUẢN LÝ TÀI SẢN NOC2
 
-> **Phiên bản:** 1.1  
-> **Cập nhật:** 2026-01-06  
-> **Mục đích:** Tổng hợp cấu trúc models và thiết kế chức năng kiểm kê
+> **Phiên bản:** 1.2  
+> **Cập nhật:** 2026-01-07  
+> **Mục đích:** Tổng hợp cấu trúc models, thiết kế chức năng và phân công Git branches
 
 ---
 
@@ -165,9 +165,62 @@
 
 ---
 
-## 📝 IV. CHANGELOG
+## � IV. PHÂN CÔNG GIT BRANCHES
+
+### 4.1 Master Data (Dev A)
+
+| Branch | Files | Chức năng |
+|--------|-------|-----------|
+| `feature/master-department` | `department/` | **CRUD Phòng ban** - Quản lý đơn vị/phòng ban. Computed: số TS, số nhân viên |
+| `feature/master-location` | `location/` | **CRUD Vị trí** - Quản lý địa điểm lắp đặt. Computed: số TS tại vị trí |
+| `feature/master-person` | `person/` | **CRUD Cá nhân** - Quản lý người dùng. Filter theo phòng ban. Computed: số TS đang quản lý |
+| `feature/master-category` | `category/` | **CRUD Loại TS** - Phân loại (máy tính, RAM...). Field `is_component` xác định linh kiện |
+
+### 4.2 Asset (Dev B)
+
+| Branch | Files | Chức năng |
+|--------|-------|-----------|
+| `feature/asset-crud` | `asset/views/asset_views.py` | **CRUD Tài sản** - Thêm/sửa/xóa (soft)/xem. Search, filter. **QR Lookup**, **Lịch sử** |
+| `feature/asset-component` | `asset/views/component_views.py` | **Quản lý linh kiện** - Xem components. **Upgrade** - lắp linh kiện. **Retrieve** - tháo linh kiện |
+| `feature/asset-transfer` | `asset/views/transfer_views.py` | **Bàn giao** - Chuyển đổi phòng/người/vị trí, ghi log. **File đính kèm** - Upload tài liệu |
+
+### 4.3 Audit (Dev C)
+
+| Branch | Files | Chức năng |
+|--------|-------|-----------|
+| `feature/audit-session` | `audit/views/session_views.py` | **Đợt kiểm kê** - CRUD Session. **generate_items** theo scope. **Workflow** start/complete. **Export report** |
+| `feature/audit-item` | `audit/views/item_views.py` | **Chi tiết kiểm kê** - Danh sách items. Thêm/xóa thủ công. **check_item** - so sánh expected vs actual |
+| `feature/audit-action` | `audit/views/action_views.py` | **Xử lý chênh lệch** - Tạo đề xuất. **approve/reject**. **execute** - cập nhật Asset, tạo TicketRequest |
+
+### 4.4 Ticket (Dev D)
+
+| Branch | Files | Chức năng |
+|--------|-------|-----------|
+| `feature/ticket-crud` | `ticket_request/views/` | **Yêu cầu sửa chữa/bảo trì** - CRUD Ticket. **Workflow** approve/reject/complete. Cập nhật Asset.status |
+
+### 4.5 Sơ đồ dependency
+
+```
+master-department ─┐
+master-location   ─┼──► asset-crud ──┬──► asset-component
+master-person     ─┤                 ├──► asset-transfer
+master-category   ─┘                 │
+                                     ▼
+                            audit-session
+                                 │
+                                 ▼
+                            audit-item
+                                 │
+                                 ▼
+                            audit-action ──► ticket-crud
+```
+
+---
+
+## �📝 V. CHANGELOG
 
 | Ngày | Phiên bản | Thay đổi |
 |------|-----------|----------|
+| 2026-01-07 | 1.2 | Thêm mô tả chi tiết 11 Git branches |
 | 2026-01-06 | 1.1 | Thêm models kiểm kê: `AuditSession`, `AuditItem`, `AuditAction` |
 | 2026-01-06 | 1.0 | Khởi tạo tài liệu |
