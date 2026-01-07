@@ -9,6 +9,7 @@ API Endpoints:
 - GET/POST  /api/assets/              → AssetListView
 - GET/PUT   /api/assets/<id>/         → AssetDetailView
 - GET       /api/assets/qr/<code>/    → qr_lookup
+- POST      /api/assets/<id>/split/   → split_asset (MỚI)
 - GET       /api/assets/<id>/history/ → AssetHistoryListView
 """
 
@@ -64,6 +65,38 @@ def qr_lookup(request, code):
     raise NotImplementedError("Chức năng chưa được triển khai")
 
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def split_asset(request, pk):
+    """
+    Tách lô tài sản thành bản ghi mới
+    
+    URL: /api/assets/<id>/split/
+    
+    Input (JSON):
+        {
+            "split_quantity": 5,           // Số lượng cần tách (bắt buộc)
+            "reason": "Ghế hỏng",          // Lý do (optional)
+            "new_status": "broken",        // Trạng thái mới (optional)
+            "new_asset_code": "GH-001-1"   // Mã mới (optional, tự sinh nếu bỏ trống)
+        }
+    
+    Output:
+        - 200: {
+            "message": "Đã tách thành công",
+            "original_asset": {...},
+            "new_asset": {...}
+        }
+        - 400: Lỗi (quantity >= current quantity)
+    
+    Logic:
+        - Gọi Asset.split() method
+        - Tự động ghi AssetHistory cho cả 2 bản ghi
+    """
+    # TODO: Implement using Asset.split() method
+    raise NotImplementedError("Chức năng chưa được triển khai")
+
+
 class AssetHistoryListView(generics.ListAPIView):
     """
     GET: Lịch sử biến động của tài sản
@@ -78,4 +111,4 @@ class AssetHistoryListView(generics.ListAPIView):
     # TODO: Implement get_queryset
 
 
-__all__ = ['AssetListView', 'AssetDetailView', 'qr_lookup', 'AssetHistoryListView']
+__all__ = ['AssetListView', 'AssetDetailView', 'qr_lookup', 'split_asset', 'AssetHistoryListView']

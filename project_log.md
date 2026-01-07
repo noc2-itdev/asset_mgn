@@ -1,6 +1,6 @@
 # 📋 TÀI LIỆU DỰ ÁN QUẢN LÝ TÀI SẢN NOC2
 
-> **Phiên bản:** 1.2  
+> **Phiên bản:** 1.3  
 > **Cập nhật:** 2026-01-07  
 > **Mục đích:** Tổng hợp cấu trúc models, thiết kế chức năng và phân công Git branches
 
@@ -52,9 +52,75 @@
 | 6 | `AssetAttachment` | Tài liệu đính kèm | Core |
 | 7 | `AssetHistory` | Lịch sử biến động | Tracking |
 | 8 | `TicketRequest` | Yêu cầu sửa chữa/bảo trì | Workflow |
-| 9 | `AuditSession` | Đợt kiểm kê | Audit (MỚI) |
-| 10 | `AuditItem` | Chi tiết kiểm kê từng TS | Audit (MỚI) |
-| 11 | `AuditAction` | Đề xuất xử lý chênh lệch | Audit (MỚI) |
+| 9 | `AuditSession` | Đợt kiểm kê | Audit |
+| 10 | `AuditItem` | Chi tiết kiểm kê từng TS | Audit |
+| 11 | `AuditAction` | Đề xuất xử lý chênh lệch | Audit |
+
+### 1.3 Chi tiết Asset Model
+
+#### Thông tin cơ bản
+| Trường | Kiểu | Mô tả |
+|--------|------|-------|
+| `name` | CharField | Tên tài sản |
+| `asset_code` | CharField | Mã tài sản (unique) |
+| `internal_code` | CharField | Ký hiệu nội bộ |
+| `category` | FK → AssetCategory | Loại tài sản |
+| `parent_asset` | FK → self | Tài sản cha (nếu là linh kiện) |
+| `status` | CharField | Trạng thái: in_use, in_storage, broken... |
+| `qr_code` | ImageField | QR code tự động sinh |
+
+#### Định lượng
+| Trường | Kiểu | Mô tả |
+|--------|------|-------|
+| `unit` | CharField | Đơn vị: cái, bộ, chiếc, máy, thanh, hộp |
+| `quantity` | PositiveInt | Số lượng (mặc định: 1) |
+
+#### Vị trí & quản lý
+| Trường | Kiểu | Mô tả |
+|--------|------|-------|
+| `current_department` | FK → Department | Phòng ban quản lý |
+| `current_person` | FK → Person | Người chịu trách nhiệm |
+| `location` | FK → Location | Vị trí lắp đặt |
+
+#### Thông tin kỹ thuật
+| Trường | Kiểu | Mô tả |
+|--------|------|-------|
+| `serial_number` | CharField | Số serial |
+| `model` | CharField | Model thiết bị |
+| `part_number` | CharField | Mã linh kiện |
+| `vendor` | CharField | Nhà cung cấp/Nhãn hiệu |
+| `country_of_origin` | CharField | Nước sản xuất |
+| `manufacturing_year` | PositiveInt | Năm sản xuất |
+
+#### Mua sắm & tiếp nhận
+| Trường | Kiểu | Mô tả |
+|--------|------|-------|
+| `acquisition_type` | CharField | purchase, transfer, donation, grant, project |
+| `acquisition_date` | DateField | Ngày đưa vào sử dụng |
+| `purchase_date` | DateField | Ngày mua sắm |
+| `warranty_expiry` | DateField | Hạn bảo hành |
+
+#### Kế toán & khấu hao
+| Trường | Kiểu | Mô tả |
+|--------|------|-------|
+| `accounting_code` | CharField | Số hiệu tài sản kế toán (unique) |
+| `original_value` | Decimal | Nguyên giá (VNĐ) |
+| `depreciation_rate` | Decimal | Tỷ lệ khấu hao (%/năm) |
+| `useful_life_years` | PositiveInt | Số năm sử dụng |
+| `has_independent_value` | Boolean | Có giá trị độc lập cần đối soát |
+
+#### Properties tính toán
+| Property | Công thức |
+|----------|-----------|
+| `residual_value` | `original_value - (original_value × depreciation_rate × years_used)` |
+| `total_value` | `original_value × quantity` |
+| `is_component` | `category.is_component` |
+
+#### Methods
+| Method | Mô tả |
+|--------|-------|
+| `split(quantity, reason, new_status)` | Tách lô tài sản thành bản ghi mới |
+| `delete()` | Soft delete (đánh dấu is_deleted) |
 
 ---
 
@@ -180,7 +246,7 @@
 
 | Branch | Files | Chức năng |
 |--------|-------|-----------|
-| `feature/asset-crud` | `asset/views/asset_views.py` | **CRUD Tài sản** - Thêm/sửa/xóa (soft)/xem. Search, filter. **QR Lookup**, **Lịch sử** |
+| `feature/asset-crud` | `asset/views/asset_views.py` | **CRUD Tài sản** - Thêm/sửa/xóa (soft)/xem. Search, filter. **QR Lookup**. **Split** - tách lô. **Lịch sử** |
 | `feature/asset-component` | `asset/views/component_views.py` | **Quản lý linh kiện** - Xem components. **Upgrade** - lắp linh kiện. **Retrieve** - tháo linh kiện |
 | `feature/asset-transfer` | `asset/views/transfer_views.py` | **Bàn giao** - Chuyển đổi phòng/người/vị trí, ghi log. **File đính kèm** - Upload tài liệu |
 
@@ -221,6 +287,8 @@ master-category   ─┘                 │
 
 | Ngày | Phiên bản | Thay đổi |
 |------|-----------|----------|
+| 2026-01-07 | 1.3 | Thêm chi tiết Asset Model (30+ trường), endpoint `split_asset` |
 | 2026-01-07 | 1.2 | Thêm mô tả chi tiết 11 Git branches |
 | 2026-01-06 | 1.1 | Thêm models kiểm kê: `AuditSession`, `AuditItem`, `AuditAction` |
+| 2026-01-06 | 1.0 | Khởi tạo tài liệu |
 | 2026-01-06 | 1.0 | Khởi tạo tài liệu |
